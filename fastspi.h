@@ -123,7 +123,7 @@ class SPIOutput<SPI_UART1_DATA, SPI_UART1_CLOCK, SPI_SPEED> : public AVRUSART1SP
 #endif
 
 #endif
-
+#elif defined(__XTENSA__)
 #else
 #  if !defined(FASTLED_INTERNAL) && !defined(FASTLED_ALL_PINS_HARDWARE_SPI)
 #    ifdef FASTLED_HAS_PRAGMA_MESSAGE

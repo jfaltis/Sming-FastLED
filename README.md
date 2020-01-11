@@ -1,11 +1,32 @@
-[![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/FastLED/public)
-[![arduino-library-badge](https://www.ardu-badge.com/badge/FastLED.svg)](https://www.ardu-badge.com/FastLED)
-
-IMPORTANT NOTE: For AVR based systems, avr-gcc 4.8.x is supported and tested.  This means Arduino 1.6.5 and later.
-
-
-FastLED 3.3
+FastLED 3.3 for Sming
 ===========
+This is a fork of [FastLED](https://github.com/FastLED/FastLED) which supports the [Sming](https://github.com/SmingHub/Sming) Open Source Framework
+
+## Getting Started
+To install this library execute following commands:
+
+```
+cd $SMING_HOME/Libraries
+git clone https://github.com/jfaltis/Sming-FastLED FastLED
+```
+
+To add the Library to your Sming project add the following line to your component.mk
+```
+ARDUINO_LIBRARIES := FastLED
+```
+
+Include the library in your code
+```
+#define FASTLED_ESP8266_RAW_PIN_ORDER
+#include <Libraries/FastLED/FastLED.h>
+```
+
+Finally run ```make``` in your Sming project directory
+
+## Known Issues
+- When changing the colors of a WS2801 LED strip the Serial connection is closed.
+
+# FastLED 3.3
 
 This is a library for easily & efficiently controlling a wide variety of LED chipsets, like the ones
 sold by adafruit (Neopixel, DotStar, LPD8806), Sparkfun (WS2801), and aliexpress.  In addition to writing to the
@@ -29,14 +50,27 @@ If you need help with using the library, please consider going to the reddit com
 
 How quickly can you get up and running with the library?  Here's a simple blink program:
 
-	#include "FastLED.h"
-	#define NUM_LEDS 60
+	#include <SmingCore.h>
+
+	#define FASTLED_ESP8266_RAW_PIN_ORDER
+	#include <Libraries/FastLED/FastLED.h>
+
+	#define NUM_LEDS 32
+
+	Timer procTimer;
 	CRGB leds[NUM_LEDS];
-	void setup() { FastLED.addLeds<NEOPIXEL, 6>(leds, NUM_LEDS); }
-	void loop() {
-		leds[0] = CRGB::White; FastLED.show(); delay(30);
-		leds[0] = CRGB::Black; FastLED.show(); delay(30);
+
+	void blink() {
+		leds[0] = CRGB::White; FastLED.show(); delay(100);
+		leds[0] = CRGB::Black; FastLED.show();
 	}
+
+	void init()
+	{
+		FastLED.addLeds<WS2801, 13, 12, RGB>(leds, NUM_LEDS);
+		procTimer.initializeMs(500, blink).start();
+	}
+
 
 ## Supported LED chipsets
 
@@ -86,6 +120,3 @@ Wait, what happend to FastSPI_LED and FastSPI_LED2?  The library was initially n
 ## For more information
 
 Check out the official site http://fastled.io for links to documentation, issues, and news
-
-
-*TODO* - get candy
