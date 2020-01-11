@@ -23,6 +23,9 @@ Include the library in your code
 
 Finally run ```make``` in your Sming project directory
 
+## Example Project
+https://github.com/jfaltis/Sming-FastLED-Example
+
 ## Known Issues
 - When changing the colors of a WS2801 LED strip the Serial connection is closed.
 
