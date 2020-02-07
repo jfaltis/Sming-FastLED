@@ -586,7 +586,7 @@ LIB8STATIC uint8_t ease8InOutQuad( uint8_t i)
     return jj2;
 }
 
-#elif EASE8_AVRASM == 1
+#elif defined(EASE8_AVRASM) && EASE8_AVRASM == 1
 // This AVR asm version of ease8InOutQuad preserves one more
 // low-bit of precision than the C version, and is also slightly
 // smaller and faster.
@@ -683,7 +683,7 @@ LIB8STATIC fract8 ease8InOutApprox( fract8 i)
     return i;
 }
 
-#elif EASE8_AVRASM == 1
+#elif defined(EASE8_AVRASM) && EASE8_AVRASM == 1
 LIB8STATIC uint8_t ease8InOutApprox( fract8 i)
 {
     // takes around 7 cycles on AVR

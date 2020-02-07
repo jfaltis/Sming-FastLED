@@ -26,7 +26,7 @@ LIB8STATIC_ALWAYS_INLINE uint8_t qadd8( uint8_t i, uint8_t j)
     unsigned int t = i + j;
     if( t > 255) t = 255;
     return t;
-#elif QADD8_AVRASM == 1
+#elif defined(QADD8_AVRASM) && QADD8_AVRASM == 1
     asm volatile(
          /* First, add j to i, conditioning the C flag */
          "add %0, %1    \n\t"
@@ -41,7 +41,7 @@ LIB8STATIC_ALWAYS_INLINE uint8_t qadd8( uint8_t i, uint8_t j)
          : "+a" (i)
          : "a"  (j) );
     return i;
-#elif QADD8_ARM_DSP_ASM == 1
+#elif defined(QADD8_ARM_DSP_ASM) && QADD8_ARM_DSP_ASM == 1
     asm volatile( "uqadd8 %0, %0, %1" : "+r" (i) : "r" (j));
     return i;
 #else
@@ -59,7 +59,7 @@ LIB8STATIC_ALWAYS_INLINE int8_t qadd7( int8_t i, int8_t j)
     int16_t t = i + j;
     if( t > 127) t = 127;
     return t;
-#elif QADD7_AVRASM == 1
+#elif defined(QADD7_AVRASM) && QADD7_AVRASM == 1
     asm volatile(
          /* First, add j to i, conditioning the V flag */
          "add %0, %1    \n\t"
@@ -75,7 +75,7 @@ LIB8STATIC_ALWAYS_INLINE int8_t qadd7( int8_t i, int8_t j)
          : "a"  (j) );
 
     return i;
-#elif QADD7_ARM_DSP_ASM == 1
+#elif defined(QADD7_ARM_DSP_ASM) && QADD7_ARM_DSP_ASM == 1
     asm volatile( "qadd8 %0, %0, %1" : "+r" (i) : "r" (j));
     return i;
 #else
@@ -91,7 +91,7 @@ LIB8STATIC_ALWAYS_INLINE uint8_t qsub8( uint8_t i, uint8_t j)
     int t = i - j;
     if( t < 0) t = 0;
     return t;
-#elif QSUB8_AVRASM == 1
+#elif defined(QSUB8_AVRASM) && QSUB8_AVRASM == 1
 
     asm volatile(
          /* First, subtract j from i, conditioning the C flag */
@@ -119,7 +119,7 @@ LIB8STATIC_ALWAYS_INLINE uint8_t add8( uint8_t i, uint8_t j)
 #if ADD8_C == 1
     int t = i + j;
     return t;
-#elif ADD8_AVRASM == 1
+#elif defined(ADD8_AVRASM) && ADD8_AVRASM == 1
     // Add j to i, period.
     asm volatile( "add %0, %1" : "+a" (i) : "a" (j));
     return i;
@@ -134,7 +134,7 @@ LIB8STATIC_ALWAYS_INLINE uint16_t add8to16( uint8_t i, uint16_t j)
 #if ADD8_C == 1
     uint16_t t = i + j;
     return t;
-#elif ADD8_AVRASM == 1
+#elif defined(ADD8_AVRASM) && ADD8_AVRASM == 1
     // Add i(one byte) to j(two bytes)
     asm volatile( "add %A[j], %[i]              \n\t"
                   "adc %B[j], __zero_reg__      \n\t"
@@ -154,7 +154,7 @@ LIB8STATIC_ALWAYS_INLINE uint8_t sub8( uint8_t i, uint8_t j)
 #if SUB8_C == 1
     int t = i - j;
     return t;
-#elif SUB8_AVRASM == 1
+#elif defined(SUB8_AVRASM) && SUB8_AVRASM == 1
     // Subtract j from i, period.
     asm volatile( "sub %0, %1" : "+a" (i) : "a" (j));
     return i;
@@ -170,7 +170,7 @@ LIB8STATIC_ALWAYS_INLINE uint8_t avg8( uint8_t i, uint8_t j)
 {
 #if AVG8_C == 1
     return (i + j) >> 1;
-#elif AVG8_AVRASM == 1
+#elif defined(AVG8_AVRASM) && AVG8_AVRASM == 1
     asm volatile(
          /* First, add j to i, 9th bit overflows into C flag */
          "add %0, %1    \n\t"
@@ -191,7 +191,7 @@ LIB8STATIC_ALWAYS_INLINE uint16_t avg16( uint16_t i, uint16_t j)
 {
 #if AVG16_C == 1
     return (uint32_t)((uint32_t)(i) + (uint32_t)(j)) >> 1;
-#elif AVG16_AVRASM == 1
+#elif defined(AVG16_AVRASM) && AVG16_AVRASM == 1
     asm volatile(
                  /* First, add jLo (heh) to iLo, 9th bit overflows into C flag */
                  "add %A[i], %A[j]    \n\t"
@@ -218,7 +218,7 @@ LIB8STATIC_ALWAYS_INLINE int8_t avg7( int8_t i, int8_t j)
 {
 #if AVG7_C == 1
     return ((i + j) >> 1) + (i & 0x1);
-#elif AVG7_AVRASM == 1
+#elif defined(AVG7_AVRASM) && AVG7_AVRASM == 1
     asm volatile(
                  "asr %1        \n\t"
                  "asr %0        \n\t"
@@ -239,7 +239,7 @@ LIB8STATIC_ALWAYS_INLINE int16_t avg15( int16_t i, int16_t j)
 {
 #if AVG15_C == 1
     return ((int32_t)((int32_t)(i) + (int32_t)(j)) >> 1) + (i & 0x1);
-#elif AVG15_AVRASM == 1
+#elif defined(AVG15_AVRASM) && AVG15_AVRASM == 1
     asm volatile(
                  /* first divide j by 2, throwing away lowest bit */
                  "asr %B[j]          \n\t"
@@ -346,7 +346,7 @@ LIB8STATIC_ALWAYS_INLINE uint8_t mul8( uint8_t i, uint8_t j)
 {
 #if MUL8_C == 1
     return ((int)i * (int)(j) ) & 0xFF;
-#elif MUL8_AVRASM == 1
+#elif defined(MUL8_AVRASM) && MUL8_AVRASM == 1
     asm volatile(
          /* Multiply 8-bit i * 8-bit j, giving 16-bit r1,r0 */
          "mul %0, %1          \n\t"
@@ -373,7 +373,7 @@ LIB8STATIC_ALWAYS_INLINE uint8_t qmul8( uint8_t i, uint8_t j)
     int p = ((int)i * (int)(j) );
     if( p > 255) p = 255;
     return p;
-#elif QMUL8_AVRASM == 1
+#elif defined(QMUL8_AVRASM) && QMUL8_AVRASM == 1
     asm volatile(
                  /* Multiply 8-bit i * 8-bit j, giving 16-bit r1,r0 */
                  "  mul %0, %1          \n\t"
@@ -406,7 +406,7 @@ LIB8STATIC_ALWAYS_INLINE int8_t abs8( int8_t i)
 #if ABS8_C == 1
     if( i < 0) i = -i;
     return i;
-#elif ABS8_AVRASM == 1
+#elif defined(ABS8_AVRASM) && ABS8_AVRASM == 1
 
 
     asm volatile(
@@ -486,7 +486,7 @@ LIB8STATIC uint8_t blend8( uint8_t a, uint8_t b, uint8_t amountOfB)
     
     return result;
 
-#elif BLEND8_AVRASM == 1
+#elif defined(BLEND8_AVRASM) && BLEND8_AVRASM == 1
     uint16_t partial;
     uint8_t result;
 

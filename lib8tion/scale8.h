@@ -25,7 +25,7 @@ LIB8STATIC_ALWAYS_INLINE uint8_t scale8( uint8_t i, fract8 scale)
 #else
     return ((uint16_t)i * (uint16_t)(scale) ) >> 8;
 #endif
-#elif SCALE8_AVRASM == 1
+#elif defined(SCALE8_AVRASM) && SCALE8_AVRASM == 1
 #if defined(LIB8_ATTINY)
 #if (FASTLED_SCALE8_FIXED == 1)
     uint8_t work=i;
@@ -102,7 +102,7 @@ LIB8STATIC_ALWAYS_INLINE uint8_t scale8_video( uint8_t i, fract8 scale)
     // uint8_t nonzeroscale = (scale != 0) ? 1 : 0;
     // uint8_t j = (i == 0) ? 0 : (((int)i * (int)(scale) ) >> 8) + nonzeroscale;
     return j;
-#elif SCALE8_AVRASM == 1
+#elif defined(SCALE8_AVRASM) && SCALE8_AVRASM == 1
     uint8_t j=0;
     asm volatile(
         "  tst %[i]\n\t"
@@ -151,7 +151,7 @@ LIB8STATIC_ALWAYS_INLINE uint8_t scale8_LEAVING_R1_DIRTY( uint8_t i, fract8 scal
 #else
     return ((int)i * (int)(scale) ) >> 8;
 #endif
-#elif SCALE8_AVRASM == 1
+#elif defined(SCALE8_AVRASM) && SCALE8_AVRASM == 1
     asm volatile(
       #if (FASTLED_SCALE8_FIXED==1)
               // Multiply 8-bit i * 8-bit scale, giving 16-bit r1,r0
@@ -195,7 +195,7 @@ LIB8STATIC_ALWAYS_INLINE void nscale8_LEAVING_R1_DIRTY( uint8_t& i, fract8 scale
 #else
     i = ((int)i * (int)(scale) ) >> 8;
 #endif
-#elif SCALE8_AVRASM == 1
+#elif defined(SCALE8_AVRASM) && SCALE8_AVRASM == 1
     asm volatile(
       #if (FASTLED_SCALE8_FIXED==1)
               // Multiply 8-bit i * 8-bit scale, giving 16-bit r1,r0
@@ -234,7 +234,7 @@ LIB8STATIC_ALWAYS_INLINE uint8_t scale8_video_LEAVING_R1_DIRTY( uint8_t i, fract
     // uint8_t nonzeroscale = (scale != 0) ? 1 : 0;
     // uint8_t j = (i == 0) ? 0 : (((int)i * (int)(scale) ) >> 8) + nonzeroscale;
     return j;
-#elif SCALE8_AVRASM == 1
+#elif defined(SCALE8_AVRASM) && SCALE8_AVRASM == 1
     uint8_t j=0;
     asm volatile(
         "  tst %[i]\n\t"
@@ -278,7 +278,7 @@ LIB8STATIC_ALWAYS_INLINE void nscale8_video_LEAVING_R1_DIRTY( uint8_t & i, fract
 {
 #if SCALE8_C == 1 || defined(LIB8_ATTINY)
     i = (((int)i * (int)scale) >> 8) + ((i&&scale)?1:0);
-#elif SCALE8_AVRASM == 1
+#elif defined(SCALE8_AVRASM) && SCALE8_AVRASM == 1
     asm volatile(
         "  tst %[i]\n\t"
         "  breq L_%=\n\t"
@@ -298,7 +298,7 @@ LIB8STATIC_ALWAYS_INLINE void nscale8_video_LEAVING_R1_DIRTY( uint8_t & i, fract
 /// Clean up the r1 register after a series of *LEAVING_R1_DIRTY calls
 LIB8STATIC_ALWAYS_INLINE void cleanup_R1()
 {
-#if CLEANUP_R1_AVRASM == 1
+#if defined(CLEANUP_R1_AVRASM) && CLEANUP_R1_AVRASM == 1
     // Restore r1 to "0"; it's expected to always be that
     asm volatile( "clr __zero_reg__  \n\t" : : : "r1" );
 #endif
@@ -324,7 +324,7 @@ LIB8STATIC void nscale8x3( uint8_t& r, uint8_t& g, uint8_t& b, fract8 scale)
     g = ((int)g * (int)(scale) ) >> 8;
     b = ((int)b * (int)(scale) ) >> 8;
 #endif
-#elif SCALE8_AVRASM == 1
+#elif defined(SCALE8_AVRASM) && SCALE8_AVRASM == 1
     r = scale8_LEAVING_R1_DIRTY(r, scale);
     g = scale8_LEAVING_R1_DIRTY(g, scale);
     b = scale8_LEAVING_R1_DIRTY(b, scale);
@@ -348,7 +348,7 @@ LIB8STATIC void nscale8x3_video( uint8_t& r, uint8_t& g, uint8_t& b, fract8 scal
     r = (r == 0) ? 0 : (((int)r * (int)(scale) ) >> 8) + nonzeroscale;
     g = (g == 0) ? 0 : (((int)g * (int)(scale) ) >> 8) + nonzeroscale;
     b = (b == 0) ? 0 : (((int)b * (int)(scale) ) >> 8) + nonzeroscale;
-#elif SCALE8_AVRASM == 1
+#elif defined(SCALE8_AVRASM) && SCALE8_AVRASM == 1
     nscale8_video_LEAVING_R1_DIRTY( r, scale);
     nscale8_video_LEAVING_R1_DIRTY( g, scale);
     nscale8_video_LEAVING_R1_DIRTY( b, scale);
@@ -375,7 +375,7 @@ LIB8STATIC void nscale8x2( uint8_t& i, uint8_t& j, fract8 scale)
     i = ((uint16_t)i * (uint16_t)(scale) ) >> 8;
     j = ((uint16_t)j * (uint16_t)(scale) ) >> 8;
 #endif
-#elif SCALE8_AVRASM == 1
+#elif defined(SCALE8_AVRASM) && SCALE8_AVRASM == 1
     i = scale8_LEAVING_R1_DIRTY(i, scale);
     j = scale8_LEAVING_R1_DIRTY(j, scale);
     cleanup_R1();
@@ -399,7 +399,7 @@ LIB8STATIC void nscale8x2_video( uint8_t& i, uint8_t& j, fract8 scale)
     uint8_t nonzeroscale = (scale != 0) ? 1 : 0;
     i = (i == 0) ? 0 : (((int)i * (int)(scale) ) >> 8) + nonzeroscale;
     j = (j == 0) ? 0 : (((int)j * (int)(scale) ) >> 8) + nonzeroscale;
-#elif SCALE8_AVRASM == 1
+#elif defined(SCALE8_AVRASM) && SCALE8_AVRASM == 1
     nscale8_video_LEAVING_R1_DIRTY( i, scale);
     nscale8_video_LEAVING_R1_DIRTY( j, scale);
     cleanup_R1();
@@ -423,7 +423,7 @@ LIB8STATIC_ALWAYS_INLINE uint16_t scale16by8( uint16_t i, fract8 scale )
     result = (i * scale) / 256;
 #endif
     return result;
-#elif SCALE16BY8_AVRASM == 1
+#elif defined(SCALE16BY8_AVRASM) && SCALE16BY8_AVRASM == 1
 #if FASTLED_SCALE8_FIXED == 1
     uint16_t result = 0;
     asm volatile(
@@ -492,7 +492,7 @@ LIB8STATIC uint16_t scale16( uint16_t i, fract16 scale )
     result = ((uint32_t)(i) * (uint32_t)(scale)) / 65536;
 #endif
     return result;
-#elif SCALE16_AVRASM == 1
+#elif defined(SCALE16_AVRASM) && SCALE16_AVRASM == 1
 #if FASTLED_SCALE8_FIXED == 1
     // implemented sort of like
     //   result = ((i * scale) + i ) / 65536

@@ -237,7 +237,7 @@ protected:
 		mSPI.select();
 
 		uint8_t s0 = pixels.getScale0(), s1 = pixels.getScale1(), s2 = pixels.getScale2();
-#if FASTLED_USE_GLOBAL_BRIGHTNESS == 1
+#if defined(FASTLED_USE_GLOBAL_BRIGHTNESS) && FASTLED_USE_GLOBAL_BRIGHTNESS == 1
 		const uint16_t maxBrightness = 0x1F;
 		uint16_t brightness = ((((uint16_t)max(max(s0, s1), s2) + 1) * maxBrightness - 1) >> 8) + 1;
 		s0 = (maxBrightness * s0 + (brightness >> 1)) / brightness;
@@ -302,7 +302,7 @@ protected:
 		mSPI.select();
 
 		uint8_t s0 = pixels.getScale0(), s1 = pixels.getScale1(), s2 = pixels.getScale2();
-#if FASTLED_USE_GLOBAL_BRIGHTNESS == 1
+#if defined(FASTLED_USE_GLOBAL_BRIGHTNESS) && FASTLED_USE_GLOBAL_BRIGHTNESS == 1
 		const uint16_t maxBrightness = 0x1F;
 		uint16_t brightness = ((((uint16_t)max(max(s0, s1), s2) + 1) * maxBrightness - 1) >> 8) + 1;
 		s0 = (maxBrightness * s0 + (brightness >> 1)) / brightness;
